@@ -1,0 +1,7 @@
+{
+	itemDisplayName: "Arista vEOS Router 4 NIC solution template with High-Availability router pair",
+	summary: "Generates full environment with 4 subnets and two vEOS Router instances for High-Availability",
+	description: "This deployment creates vEOS Router with 4 NICs. Route Tables for the subnets are configured with the vEOS Router as the gateway for all traffic outside of the private subnet. A reserved subnet is created for the vEOS Router instances. Additionally, two vEOS Routers are installed to provide High-Availability, and all non-reserved subnets are assigned to one of the routers through User Defined Routes.",
+	githubUsername: "jayden-at-arista",
+	dateUpdated: "2017-12-20"
+}

@@ -1,0 +1,941 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#", 
+    "contentVersion": "1.0.0.0", 
+    "outputs": {
+        "hostname": {
+            "type": "string", 
+            "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
+        }
+    }, 
+    "parameters": {
+        "adminPassword": {
+            "defaultValue": "", 
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }, 
+            "type": "securestring"
+        }, 
+        "adminUsername": {
+            "defaultValue": "", 
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }, 
+            "type": "string"
+        }, 
+        "authenticationType": {
+            "allowedValues": [
+                "password", 
+                "sshPublicKey"
+            ], 
+            "defaultValue": "sshPublicKey", 
+            "metadata": {
+                "description": "Authentication type for accessing the VM."
+            }, 
+            "type": "string"
+        }, 
+        "customData": {
+            "defaultValue": "%EOS-STARTUP-CONFIG-START%\n%EOS-STARTUP-CONFIG-END%\n", 
+            "metadata": {
+                "description": "User Data for the vEOS instance."
+            }, 
+            "type": "string"
+        }, 
+        "customData2": {
+            "defaultValue": "%EOS-STARTUP-CONFIG-START%\n%EOS-STARTUP-CONFIG-END%\n", 
+            "metadata": {
+                "description": "User Data for the vEOS instance."
+            }, 
+            "type": "string"
+        }, 
+        "imageSKU": {
+            "defaultValue": "eos-4_20_1fx-virtual-router", 
+            "metadata": {
+                "description": "vEOS Router Image SKU"
+            }, 
+            "type": "string"
+        }, 
+        "location": {
+            "metadata": {
+                "description": "vEOS Router location."
+            }, 
+            "type": "string"
+        }, 
+        "sshPublicKey": {
+            "defaultValue": "", 
+            "metadata": {
+                "description": "SSH Key for the Virtual Machine."
+            }, 
+            "type": "string"
+        }, 
+        "subnet1Name": {
+            "defaultValue": "vEOS-Reserved-Subnet", 
+            "metadata": {
+                "description": "Subnet 0 Name"
+            }, 
+            "type": "string"
+        }, 
+        "subnet1Prefix": {
+            "defaultValue": "10.1.0.0/24", 
+            "metadata": {
+                "description": "Subnet 1 Prefix"
+            }, 
+            "type": "string"
+        }, 
+        "subnet1StartAddress": {
+            "defaultValue": "10.1.0.4", 
+            "metadata": {
+                "description": "Subnet 1 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet1StartAddress2": {
+            "defaultValue": "10.1.0.5", 
+            "metadata": {
+                "description": "Subnet 1 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet2Name": {
+            "defaultValue": "Subnet-1", 
+            "metadata": {
+                "description": "Subnet 1 Name"
+            }, 
+            "type": "string"
+        }, 
+        "subnet2Prefix": {
+            "defaultValue": "10.1.1.0/24", 
+            "metadata": {
+                "description": "Subnet 2 Prefix"
+            }, 
+            "type": "string"
+        }, 
+        "subnet2StartAddress": {
+            "defaultValue": "10.1.1.4", 
+            "metadata": {
+                "description": "Subnet 2 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet2StartAddress2": {
+            "defaultValue": "10.1.1.5", 
+            "metadata": {
+                "description": "Subnet 2 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet3Name": {
+            "defaultValue": "Subnet-2", 
+            "metadata": {
+                "description": "Subnet 2 Name"
+            }, 
+            "type": "string"
+        }, 
+        "subnet3Prefix": {
+            "defaultValue": "10.1.2.0/24", 
+            "metadata": {
+                "description": "Subnet 3 Prefix"
+            }, 
+            "type": "string"
+        }, 
+        "subnet3StartAddress": {
+            "defaultValue": "10.1.2.4", 
+            "metadata": {
+                "description": "Subnet 3 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet3StartAddress2": {
+            "defaultValue": "10.1.2.5", 
+            "metadata": {
+                "description": "Subnet 3 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet4Name": {
+            "defaultValue": "Subnet-3", 
+            "metadata": {
+                "description": "Subnet 3 Name"
+            }, 
+            "type": "string"
+        }, 
+        "subnet4Prefix": {
+            "defaultValue": "10.1.3.0/24", 
+            "metadata": {
+                "description": "Subnet 4 Prefix"
+            }, 
+            "type": "string"
+        }, 
+        "subnet4StartAddress": {
+            "defaultValue": "10.1.3.4", 
+            "metadata": {
+                "description": "Subnet 4 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "subnet4StartAddress2": {
+            "defaultValue": "10.1.3.5", 
+            "metadata": {
+                "description": "Subnet 4 Starting IP Address"
+            }, 
+            "type": "string"
+        }, 
+        "virtualNetworkAddressPrefix": {
+            "defaultValue": "10.1.0.0/16", 
+            "metadata": {
+                "description": "Virtual Network Address prefix"
+            }, 
+            "type": "string"
+        }, 
+        "virtualNetworkName": {
+            "defaultValue": "vEOS_Network", 
+            "metadata": {
+                "description": "VNET name."
+            }, 
+            "type": "string"
+        }, 
+        "vmName": {
+            "defaultValue": "vEOS1", 
+            "metadata": {
+                "description": "Name for the Virtual Machine."
+            }, 
+            "type": "string"
+        }, 
+        "vmName2": {
+            "defaultValue": "vEOS2", 
+            "metadata": {
+                "description": "Name for the Virtual Machine."
+            }, 
+            "type": "string"
+        }, 
+        "vmSize": {
+            "allowedValues": [
+                "Standard_D2_v2", 
+                "Standard_D3_v2", 
+                "Standard_D4_v2", 
+                "Standard_D5_v2"
+            ], 
+            "defaultValue": "Standard_D3_v2", 
+            "metadata": {
+                "description": "VM size"
+            }, 
+            "type": "string"
+        }
+    }, 
+    "resources": [
+        {
+            "apiVersion": "2017-10-01", 
+            "kind": "Storage", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('storageAccountName')]", 
+            "properties": {}, 
+            "sku": {
+                "name": "Standard_LRS"
+            }, 
+            "type": "Microsoft.Storage/storageAccounts"
+        }, 
+        {
+            "apiVersion": "2017-03-30", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('availabilitySetName')]", 
+            "properties": {
+                "platformFaultDomainCount": "[variables('faultDomainCount')]", 
+                "platformUpdateDomainCount": "[variables('updateDomainCount')]"
+            }, 
+            "sku": {
+                "name": "Aligned"
+            }, 
+            "type": "Microsoft.Compute/availabilitySets"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTable1Name'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]", 
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTable2Name'))]", 
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTable3Name'))]", 
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTable4Name'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('vnetName')]", 
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                }, 
+                "subnets": [
+                    {
+                        "name": "[variables('subnet1Name')]", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet1Prefix')]", 
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgname'))]"
+                            }, 
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable1Name'))]"
+                            }
+                        }
+                    }, 
+                    {
+                        "name": "[variables('subnet2Name')]", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet2Prefix')]", 
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable2Name'))]"
+                            }
+                        }
+                    }, 
+                    {
+                        "name": "[variables('subnet3Name')]", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet3Prefix')]", 
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable3Name'))]"
+                            }
+                        }
+                    }, 
+                    {
+                        "name": "[variables('subnet4Name')]", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet4Prefix')]", 
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTable4Name'))]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/virtualNetworks"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nsgName')]", 
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH-Rule", 
+                        "properties": {
+                            "access": "Allow", 
+                            "description": "Allow SSH", 
+                            "destinationAddressPrefix": "*", 
+                            "destinationPortRange": "22", 
+                            "direction": "Inbound", 
+                            "priority": 100, 
+                            "protocol": "Tcp", 
+                            "sourceAddressPrefix": "Internet", 
+                            "sourcePortRange": "*"
+                        }
+                    }, 
+                    {
+                        "name": "UDP-Rule1", 
+                        "properties": {
+                            "access": "Allow", 
+                            "description": "Allow UDP", 
+                            "destinationAddressPrefix": "*", 
+                            "destinationPortRange": "500", 
+                            "direction": "Inbound", 
+                            "priority": 101, 
+                            "protocol": "Udp", 
+                            "sourceAddressPrefix": "Internet", 
+                            "sourcePortRange": "*"
+                        }
+                    }, 
+                    {
+                        "name": "UDP-Rule2", 
+                        "properties": {
+                            "access": "Allow", 
+                            "description": "Allow UDP", 
+                            "destinationAddressPrefix": "*", 
+                            "destinationPortRange": "4500", 
+                            "direction": "Inbound", 
+                            "priority": 102, 
+                            "protocol": "Udp", 
+                            "sourceAddressPrefix": "Internet", 
+                            "sourcePortRange": "*"
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkSecurityGroups"
+        }, 
+        {
+            "apiVersion": "2017-03-30", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]", 
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic0Name'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic1Name'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic2Name'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic3Name'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('vmName')]", 
+            "plan": {
+                "name": "[variables('imageSKU')]", 
+                "product": "[variables('imageOffer')]", 
+                "publisher": "arista-networks"
+            }, 
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+                }, 
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true", 
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
+                    }
+                }, 
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                }, 
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic0Name'))]", 
+                            "properties": {
+                                "primary": true
+                            }
+                        }, 
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic1Name'))]", 
+                            "properties": {
+                                "primary": false
+                            }
+                        }, 
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic2Name'))]", 
+                            "properties": {
+                                "primary": false
+                            }
+                        }, 
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic3Name'))]", 
+                            "properties": {
+                                "primary": false
+                            }
+                        }
+                    ]
+                }, 
+                "osProfile": "[variables('osProfile')]", 
+                "storageProfile": {
+                    "imageReference": {
+                        "offer": "[variables('imageOffer')]", 
+                        "publisher": "[variables('imagePublisher')]", 
+                        "sku": "[variables('imageSKU')]", 
+                        "version": "latest"
+                    }
+                }
+            }, 
+            "type": "Microsoft.Compute/virtualMachines"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('routeTable1Name')]", 
+            "properties": {
+                "routes": []
+            }, 
+            "type": "Microsoft.Network/routeTables"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]", 
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic0Name')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic0Address')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+                            }, 
+                            "subnet": {
+                                "id": "[variables('subnet1Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('routeTable2Name')]", 
+            "properties": {
+                "routes": [
+                    {
+                        "name": "Subnet-Local-Route", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet2Prefix')]", 
+                            "nextHopType": "VnetLocal"
+                        }
+                    }, 
+                    {
+                        "name": "VNET-Route-to-vEOS", 
+                        "properties": {
+                            "addressPrefix": "[variables('addressPrefix')]", 
+                            "nextHopIpAddress": "[variables('nic1Address')]", 
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }, 
+                    {
+                        "name": "Default-Route-to-vEOS", 
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0", 
+                            "nextHopIpAddress": "[variables('nic1Address')]", 
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/routeTables"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic1Name')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic1Address')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "subnet": {
+                                "id": "[variables('subnet2Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('routeTable3Name')]", 
+            "properties": {
+                "routes": [
+                    {
+                        "name": "Subnet-Local-Route", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet3Prefix')]", 
+                            "nextHopType": "VnetLocal"
+                        }
+                    }, 
+                    {
+                        "name": "VNET-Route-to-vEOS", 
+                        "properties": {
+                            "addressPrefix": "[variables('addressPrefix')]", 
+                            "nextHopIpAddress": "[variables('nic2Address2')]", 
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }, 
+                    {
+                        "name": "Default-Route-to-vEOS", 
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0", 
+                            "nextHopIpAddress": "[variables('nic2Address2')]", 
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/routeTables"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic2Name')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic2Address')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "subnet": {
+                                "id": "[variables('subnet3Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('routeTable4Name')]", 
+            "properties": {
+                "routes": [
+                    {
+                        "name": "Subnet-Local-Route", 
+                        "properties": {
+                            "addressPrefix": "[variables('subnet4Prefix')]", 
+                            "nextHopType": "VnetLocal"
+                        }
+                    }, 
+                    {
+                        "name": "VNET-Route-to-vEOS", 
+                        "properties": {
+                            "addressPrefix": "[variables('addressPrefix')]", 
+                            "nextHopIpAddress": "[variables('nic3Address2')]", 
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }, 
+                    {
+                        "name": "Default-Route-to-vEOS", 
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0", 
+                            "nextHopIpAddress": "[variables('nic3Address2')]", 
+                            "nextHopType": "VirtualAppliance"
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/routeTables"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic3Name')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic3Address')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "subnet": {
+                                "id": "[variables('subnet4Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('publicIPAddressName')]", 
+            "properties": {
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('dnsPrefix')]"
+                }, 
+                "publicIPAllocationMethod": "Dynamic"
+            }, 
+            "type": "Microsoft.Network/publicIPAddresses"
+        }, 
+        {
+            "apiVersion": "2017-03-30", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]", 
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic0Name2'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic1Name2'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic2Name2'))]", 
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nic3Name2'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('vmName2')]", 
+            "plan": {
+                "name": "[variables('imageSKU')]", 
+                "product": "[variables('imageOffer')]", 
+                "publisher": "arista-networks"
+            }, 
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+                }, 
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true", 
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob]"
+                    }
+                }, 
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                }, 
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic0Name2'))]", 
+                            "properties": {
+                                "primary": true
+                            }
+                        }, 
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic1Name2'))]", 
+                            "properties": {
+                                "primary": false
+                            }
+                        }, 
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic2Name2'))]", 
+                            "properties": {
+                                "primary": false
+                            }
+                        }, 
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nic3Name2'))]", 
+                            "properties": {
+                                "primary": false
+                            }
+                        }
+                    ]
+                }, 
+                "osProfile": "[variables('osProfile2')]", 
+                "storageProfile": {
+                    "imageReference": {
+                        "offer": "[variables('imageOffer')]", 
+                        "publisher": "[variables('imagePublisher')]", 
+                        "sku": "[variables('imageSKU')]", 
+                        "version": "latest"
+                    }
+                }
+            }, 
+            "type": "Microsoft.Compute/virtualMachines"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "location": "[parameters('location')]", 
+            "name": "[variables('publicIPAddressName2')]", 
+            "properties": {
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('dnsPrefix2')]"
+                }, 
+                "publicIPAllocationMethod": "Dynamic"
+            }, 
+            "type": "Microsoft.Network/publicIPAddresses"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]", 
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName2'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic0Name2')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic0Address2')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName2'))]"
+                            }, 
+                            "subnet": {
+                                "id": "[variables('subnet1Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic1Name2')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic1Address2')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "subnet": {
+                                "id": "[variables('subnet2Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic2Name2')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic2Address2')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "subnet": {
+                                "id": "[variables('subnet3Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }, 
+        {
+            "apiVersion": "2017-10-01", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]", 
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+            ], 
+            "location": "[parameters('location')]", 
+            "name": "[variables('nic3Name2')]", 
+            "properties": {
+                "enableIPForwarding": true, 
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1", 
+                        "properties": {
+                            "privateIPAddress": "[variables('nic3Address2')]", 
+                            "privateIPAllocationMethod": "Static", 
+                            "subnet": {
+                                "id": "[variables('subnet4Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }, 
+            "type": "Microsoft.Network/networkInterfaces"
+        }
+    ], 
+    "variables": {
+        "addressPrefix": "[parameters('virtualNetworkAddressPrefix')]", 
+        "availabilitySetName": "vEOS-Availability-Set", 
+        "dnsPrefix": "[concat('veos1-', uniqueString(resourceGroup().id))]", 
+        "dnsPrefix2": "[concat('veos2-', uniqueString(resourceGroup().id))]", 
+        "faultDomainCount": "2", 
+        "imageOffer": "veos-router", 
+        "imagePublisher": "arista-networks", 
+        "imageSKU": "[parameters('imageSKU')]", 
+        "nic0Address": "[parameters('subnet1StartAddress')]", 
+        "nic0Address2": "[parameters('subnet1StartAddress2')]", 
+        "nic0Name": "[concat(variables('vmName'), '-Nic0')]", 
+        "nic0Name2": "[concat(variables('vmName2'), '-Nic0')]", 
+        "nic1Address": "[parameters('subnet2StartAddress')]", 
+        "nic1Address2": "[parameters('subnet2StartAddress2')]", 
+        "nic1Name": "[concat(variables('vmName'), '-Nic1')]", 
+        "nic1Name2": "[concat(variables('vmName2'), '-Nic1')]", 
+        "nic2Address": "[parameters('subnet3StartAddress')]", 
+        "nic2Address2": "[parameters('subnet3StartAddress2')]", 
+        "nic2Name": "[concat(variables('vmName'), '-Nic2')]", 
+        "nic2Name2": "[concat(variables('vmName2'), '-Nic2')]", 
+        "nic3Address": "[parameters('subnet4StartAddress')]", 
+        "nic3Address2": "[parameters('subnet4StartAddress2')]", 
+        "nic3Name": "[concat(variables('vmName'), '-Nic3')]", 
+        "nic3Name2": "[concat(variables('vmName2'), '-Nic3')]", 
+        "nsgname": "vEOS-SSH-SecurityGroup", 
+        "osProfile": "[variables(concat('osProfile',parameters('authenticationType')))]", 
+        "osProfile2": "[variables(concat('osProfile',parameters('authenticationType'),'2'))]", 
+        "osProfilepassword": {
+            "adminPassword": "[parameters('adminPassword')]", 
+            "adminUsername": "[parameters('adminUsername')]", 
+            "computerName": "[variables('vmName')]", 
+            "customData": "[base64(parameters('customData'))]"
+        }, 
+        "osProfilepassword2": {
+            "adminPassword": "[parameters('adminPassword')]", 
+            "adminUsername": "[parameters('adminUsername')]", 
+            "computerName": "[variables('vmName2')]", 
+            "customData": "[base64(parameters('customData2'))]"
+        }, 
+        "osProfilesshPublicKey": {
+            "adminUsername": "[parameters('adminUsername')]", 
+            "computerName": "[variables('vmName')]", 
+            "customData": "[base64(parameters('customData'))]", 
+            "linuxConfiguration": {
+                "disablePasswordAuthentication": "true", 
+                "ssh": {
+                    "publicKeys": [
+                        {
+                            "keyData": "[parameters('sshPublicKey')]", 
+                            "path": "[variables('sshKeyPath')]"
+                        }
+                    ]
+                }
+            }
+        }, 
+        "osProfilesshPublicKey2": {
+            "adminUsername": "[parameters('adminUsername')]", 
+            "computerName": "[variables('vmName2')]", 
+            "customData": "[base64(parameters('customData2'))]", 
+            "linuxConfiguration": {
+                "disablePasswordAuthentication": "true", 
+                "ssh": {
+                    "publicKeys": [
+                        {
+                            "keyData": "[parameters('sshPublicKey')]", 
+                            "path": "[variables('sshKeyPath')]"
+                        }
+                    ]
+                }
+            }
+        }, 
+        "publicIPAddressName": "publicIP1", 
+        "publicIPAddressName2": "publicIP2", 
+        "routeTable1Name": "vEOS-Reserved-RouteTable", 
+        "routeTable2Name": "[concat(variables('subnet2Name'),'-vEOS-RouteTable')]", 
+        "routeTable3Name": "[concat(variables('subnet3Name'),'-vEOS-RouteTable')]", 
+        "routeTable4Name": "[concat(variables('subnet4Name'),'-vEOS-RouteTable')]", 
+        "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]", 
+        "storageAccountName": "[concat('vhds', uniqueString(resourceGroup().id))]", 
+        "subnet1Name": "[parameters('subnet1Name')]", 
+        "subnet1Prefix": "[parameters('subnet1Prefix')]", 
+        "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnet1Name'))]", 
+        "subnet2Name": "[parameters('subnet2Name')]", 
+        "subnet2Prefix": "[parameters('subnet2Prefix')]", 
+        "subnet2Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnet2Name'))]", 
+        "subnet3Name": "[parameters('subnet3Name')]", 
+        "subnet3Prefix": "[parameters('subnet3Prefix')]", 
+        "subnet3Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnet3Name'))]", 
+        "subnet4Name": "[parameters('subnet4Name')]", 
+        "subnet4Prefix": "[parameters('subnet4Prefix')]", 
+        "subnet4Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnet4Name'))]", 
+        "updateDomainCount": "2", 
+        "vmName": "[parameters('vmName')]", 
+        "vmName2": "[parameters('vmName2')]", 
+        "vmSize": "[parameters('vmSize')]", 
+        "vnetName": "[parameters('virtualNetworkName')]"
+    }
+}
